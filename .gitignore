@@ -1,0 +1,6 @@
+# No se toman en cuenta archivos con este formato
+
+*.png
+*.jpg
+
+
