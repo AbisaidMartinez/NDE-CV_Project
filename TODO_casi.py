@@ -1,17 +1,3 @@
-#Hola mi bida
-# Este es un intento :p 
-#no se que hago pero luzco genial haciendolo
-#ehm pues creo que aqui se calcula el área, por procesamiento de imagenes y por montecarlo
-#se supone que también esta la comparación de amnos métodos pero no se por que se ve asi la gráfica
-#segun también esta la Estimación de análisis en tiempo y frecuencia de señales acústicas sobre muestra
-#tambien se estima el área de adhesión :p efectiva
-#lo que si me confundío es el mapa de posición y amplitud del minimo, creo que ese esta mal, debería ser lo que estabamos haciendo ayer 
-
-#muchas gracias por ayudarme mi amor, te amo c: muchote
-
-
-
-
 import cv2
 import pandas as pd
 import numpy as np
