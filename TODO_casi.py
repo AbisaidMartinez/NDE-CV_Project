@@ -17,7 +17,7 @@ f_lim = 0.1e7  # 100 MHz
 num_simulaciones = 200
 N_PUNTOS_MC = 100000  # Para área MC
 
-print("=== PROYECTO END COMPLETO: Cobertura de 6 Puntos (Escala Actualizada) ===")
+print("=== PROYECTO END COMPLETO ===")
 
 #%% 1. SEGMENTACIÓN (Punto 1: Área por procesamiento de imágenes)
 print("\n1. Estimación Área por Imágenes...")
@@ -106,8 +106,11 @@ plt.figure(figsize=(8, 5))
 plt.plot(k_range, se_directo, 'b-', label='Directo (Otsu)')
 plt.plot(k_range, se_mc, 'r--', label='Monte Carlo')
 plt.axhline(error_deseado, color='g', linestyle=':', label=f'Error Deseado ({error_deseado})')
-plt.xlabel('Número de Tomas (k)'); plt.ylabel('Error Estándar (SE)'); plt.title('Error vs. k')
-plt.legend(); plt.grid(alpha=0.3)
+plt.xlabel('Número de Tomas (k)'); 
+plt.ylabel('Error Estándar (SE)'); 
+plt.title('Error vs. k')
+plt.legend(); 
+plt.grid(alpha=0.3)
 plt.savefig('error_vs_k.png', dpi=150, bbox_inches='tight')
 plt.show()
 
@@ -125,8 +128,13 @@ signals_10 = signals[:, :num_signals_viz]
 N = len(t)
 plt.figure(figsize=(12, 5))
 plt.subplot(1, 2, 1)
-for i in range(num_signals_viz): plt.plot(t, signals_10[:, i], label=f'S{i+1}', alpha=0.7)
-plt.xlabel('Tiempo (s)'); plt.ylabel('Amplitud'); plt.title('Tiempo (Primeras 10)'); plt.legend(ncol=2); plt.grid(alpha=0.3)
+for i in range(num_signals_viz): 
+    plt.plot(t, signals_10[:, i], label=f'S{i+1}', alpha=0.7)
+plt.xlabel('Tiempo (s)'); 
+plt.ylabel('Amplitud'); 
+plt.title('Tiempo (Primeras 10)'); 
+plt.legend(ncol=2); 
+plt.grid(alpha=0.3)
 
 plt.subplot(1, 2, 2)
 Y_10 = np.fft.fft(signals_10, axis=0)
@@ -135,7 +143,9 @@ mask_f = f <= f_lim
 for i in range(num_signals_viz):
     mag = np.abs(Y_10[:N // 2, i][mask_f])
     plt.plot(f[mask_f]/1e6, mag, label=f'S{i+1}', alpha=0.7)
-plt.xlabel('Frecuencia (MHz)'); plt.ylabel('Magnitud'); plt.title(f'Frecuencia (hasta {f_lim/1e6:.1f} MHz)')
+plt.xlabel('Frecuencia (MHz)'); 
+plt.ylabel('Magnitud'); 
+plt.title(f'Frecuencia (hasta {f_lim/1e6:.1f} MHz)')
 plt.legend(ncol=2); plt.grid(alpha=0.3); plt.xscale('log')
 plt.tight_layout()
 plt.savefig('senales_tiempo_frecuencia.png', dpi=150, bbox_inches='tight')  # Una figura combinada
@@ -189,8 +199,10 @@ plt.axis('equal')
 
 plt.subplot(1, 2, 2)
 plt.hist2d(pos_mapeadas_cm[:, 0], pos_mapeadas_cm[:, 1], bins=10, weights=amp_min, cmap='coolwarm')
-plt.colorbar(label='Amplitud Mínimo'); plt.title('Distribución Espacial del Mínimo')
-plt.xlabel('X (cm)'); plt.ylabel('Y (cm)')
+plt.colorbar(label='Amplitud Mínimo'); 
+plt.title('Distribución Espacial del Mínimo')
+plt.xlabel('X (cm)'); 
+plt.ylabel('Y (cm)')
 plt.tight_layout()
 plt.savefig('mapa_minimo.png', dpi=150, bbox_inches='tight')
 plt.show()
@@ -210,8 +222,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Parámetros (ajusta con tus valores)
-Z_g = 12.5e6  # Rayl vidrio
-Z_a = 3e6     # Rayl adhesivo
+Z_g = 12.5e6  # Impedancia vidrio
+Z_a = 3e6     # Impedancia adhesivo
 c_a = 2500    # m/s en adhesivo
 h = 0.0025    # m (2.5 mm)
 f_range = np.linspace(0.01, 2, 1000) * 1e6  # Hz, enfocado en 0-2 MHz
@@ -231,7 +243,7 @@ plt.ylabel('|R(f)|')
 plt.title('Coeficiente de Reflexión |R(f)| - Teorema de Traslación de Impedancia')
 plt.grid(alpha=0.3)
 plt.ylim(0, 1.1)
-plt.xlim(0, 2)  # Enfocado en tu rango
+plt.xlim(0, 2)  
 plt.show()
 
 print(f"Primer mínimo en f ≈ {f_range[np.argmin(mag_R)] / 1e6:.3f} MHz")
