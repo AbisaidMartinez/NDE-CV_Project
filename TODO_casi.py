@@ -6,7 +6,7 @@ from scipy import ndimage
 from scipy.stats import linregress
 np.random.seed(123)  # Reproducibilidad
 
-# --- PARÁMETROS GLOBALES (ACTUALIZADO) ---
+# --- PARÁMETROS GLOBALES ---
 IMAGEN_PATH = 'ima_rec.JPG'  # Tu imagen
 CSV_PATH = r'C:\Users\qbo28\OneDrive\Escritorio\Proyecto_mediotermino\sixty_signal_adhesive.csv'
 scale_px_per_cm = 1565 / 15  # Nueva escala: 104.333 px/cm
@@ -94,27 +94,7 @@ plt.tight_layout()
 plt.savefig('montecarlo_area.png', dpi=150, bbox_inches='tight')
 plt.show()
 
-#%% 3. COMPARACIÓN Y ERROR VS. K (Punto 3)
-print("\n3. Comparación y Error vs. k...")
-error_relativo = abs(area_mc_cm2 - area_cm2) / area_cm2 * 100
-print(f"Comparación: Error relativo {error_relativo:.1f}%")
-k_range = np.arange(1, 101)
-se_directo = np.zeros_like(k_range)  # Directo: converge inmediatamente
-se_mc = sigma_adhesion / np.sqrt(k_range)  # MC: SE teórico
-
-plt.figure(figsize=(8, 5))
-plt.plot(k_range, se_directo, 'b-', label='Directo (Otsu)')
-plt.plot(k_range, se_mc, 'r--', label='Monte Carlo')
-plt.axhline(error_deseado, color='g', linestyle=':', label=f'Error Deseado ({error_deseado})')
-plt.xlabel('Número de Tomas (k)'); 
-plt.ylabel('Error Estándar (SE)'); 
-plt.title('Error vs. k')
-plt.legend(); 
-plt.grid(alpha=0.3)
-plt.savefig('error_vs_k.png', dpi=150, bbox_inches='tight')
-plt.show()
-
-#%% 4. ANÁLISIS TIEMPO/FRECUENCIA (Punto 4)
+#%% 3. ANÁLISIS TIEMPO/FRECUENCIA (Punto 4)
 print("\n4. Análisis Tiempo/Frecuencia...")
 data = pd.read_csv(CSV_PATH)
 t = data.iloc[:, 0].values
@@ -163,7 +143,7 @@ for i in range(num_signals_total):
 f0_mhz = np.array(f0_values) / 1e6
 print(f"Media f0: {np.mean(f0_mhz):.3f} MHz")
 
-#%% 5. COMBINACIÓN MC + ESPECTRAL (Punto 5: Área de Adhesión)
+#%% 4. COMBINACIÓN MC + ESPECTRAL (Punto 5: Área de Adhesión)
 print("\n5. Combinación MC + Espectral...")
 y_coords, x_coords = np.where(adhesivo_mask)
 num_puntos_validos = len(x_coords)
@@ -174,7 +154,7 @@ pos_mapeadas_cm = posiciones_cm[:num_signals_total]
 adhesion_efectiva = area_cm2 * np.mean(f0_mhz)  # Integración: área × media f0
 print(f"Adhesión efectiva (área adhesión ponderada): {adhesion_efectiva:.3f} MHz·cm²")
 
-#%% 6. MAPA DEL "MÍNIMO" (Punto 6: Dos gráficos)
+#%% 5. MAPA DEL "MÍNIMO" (Punto 6: Dos gráficos)
 
 print("\n6. Mapa del Mínimo...")
 amplitud_minima = []
@@ -208,7 +188,7 @@ plt.savefig('mapa_minimo.png', dpi=150, bbox_inches='tight')
 plt.show()
 print(f"Media amplitud mínimo: {np.mean(amp_min):.2e}")
 
-#%% Exportaciones
+#%% 6. Exportaciones
 
 df_pos = pd.DataFrame({'x_cm': pos_mapeadas_cm[:, 0], 'y_cm': pos_mapeadas_cm[:, 1]})
 df_pos.to_csv('posiciones_muestreo.csv', index=False)
@@ -216,7 +196,7 @@ df_f0 = pd.DataFrame({'D': range(1, num_signals_total+1), 'f0_MHz': f0_mhz, 'amp
 df_f0.to_csv('f0_y_minimo.csv', index=False)
 print("\n=== Figuras y CSVs generados para reporte. Todo cubierto! ===")
 
-#%%
+#%% 
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -240,7 +220,7 @@ plt.figure(figsize=(8, 5))
 plt.plot(f_range / 1e6, mag_R, 'b-', linewidth=1.5)
 plt.xlabel('Frecuencia f (MHz)')
 plt.ylabel('|R(f)|')
-plt.title('Coeficiente de Reflexión |R(f)| - Teorema de Traslación de Impedancia')
+plt.title('Coeficiente de Reflexión |R(f)|')
 plt.grid(alpha=0.3)
 plt.ylim(0, 1.1)
 plt.xlim(0, 2)  
