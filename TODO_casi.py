@@ -9,7 +9,6 @@ np.random.seed(123)  # Reproducibilidad
 # --- PARÁMETROS GLOBALES (ACTUALIZADO) ---
 IMAGEN_PATH = 'ima_rec.JPG'  # Tu imagen
 CSV_PATH = r'C:\Users\qbo28\OneDrive\Escritorio\Proyecto_mediotermino\sixty_signal_adhesive.csv'
-#r'C:\Users\male1\Downloads\RYMA\4 Cuatrimestr\END\sixty_signal_adhesive.csv'  # Tu CSV
 scale_px_per_cm = 1565 / 15  # Nueva escala: 104.333 px/cm
 k_muestras = 60
 error_deseado = 0.05
@@ -166,6 +165,7 @@ adhesion_efectiva = area_cm2 * np.mean(f0_mhz)  # Integración: área × media f
 print(f"Adhesión efectiva (área adhesión ponderada): {adhesion_efectiva:.3f} MHz·cm²")
 
 #%% 6. MAPA DEL "MÍNIMO" (Punto 6: Dos gráficos)
+
 print("\n6. Mapa del Mínimo...")
 amplitud_minima = []
 for i in range(num_signals_total):
@@ -181,8 +181,11 @@ plt.figure(figsize=(10, 4))
 plt.subplot(1, 2, 1)
 plt.imshow(adhesivo_mask, cmap='gray', extent=[0, w/scale_px_per_cm, 0, h/scale_px_per_cm])
 plt.scatter(pos_mapeadas_cm[:, 0], pos_mapeadas_cm[:, 1], c=amp_min, s=50, cmap='coolwarm', edgecolors='k')
-plt.colorbar(label='Amplitud Mínimo'); plt.title('Posición y Amplitud del Mínimo')
-plt.xlabel('X (cm)'); plt.ylabel('Y (cm)'); plt.axis('equal')
+plt.colorbar(label='Amplitud Mínimo'); 
+plt.title('Posición y Amplitud del Mínimo')
+plt.xlabel('X (cm)'); 
+plt.ylabel('Y (cm)'); 
+plt.axis('equal')
 
 plt.subplot(1, 2, 2)
 plt.hist2d(pos_mapeadas_cm[:, 0], pos_mapeadas_cm[:, 1], bins=10, weights=amp_min, cmap='coolwarm')
@@ -193,7 +196,8 @@ plt.savefig('mapa_minimo.png', dpi=150, bbox_inches='tight')
 plt.show()
 print(f"Media amplitud mínimo: {np.mean(amp_min):.2e}")
 
-# Exportaciones
+#%% Exportaciones
+
 df_pos = pd.DataFrame({'x_cm': pos_mapeadas_cm[:, 0], 'y_cm': pos_mapeadas_cm[:, 1]})
 df_pos.to_csv('posiciones_muestreo.csv', index=False)
 df_f0 = pd.DataFrame({'D': range(1, num_signals_total+1), 'f0_MHz': f0_mhz, 'amp_min': amp_min})
