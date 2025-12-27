@@ -20,13 +20,10 @@ N_PUNTOS_MC = 100000  # Para área MC
 
 print("=== PROYECTO END COMPLETO: Cobertura de 6 Puntos (Escala Actualizada) ===")
 
-#%% 1. SEGMENTACIÓN (Punto 1: Área por procesamiento de imágenes)
+# 1. SEGMENTACIÓN (Punto 1: Área por procesamiento de imágenes)
 print("\n1. Estimación Área por Imágenes...")
 imagen = cv2.imread(IMAGEN_PATH, cv2.IMREAD_GRAYSCALE)
-
-if imagen is None: 
-    raise ValueError(f"Error cargando {IMAGEN_PATH}")
-
+if imagen is None: raise ValueError(f"Error cargando {IMAGEN_PATH}")
 imagen_suavizada = cv2.GaussianBlur(imagen, (5, 5), 0)
 umbral, binarizada = cv2.threshold(imagen_suavizada, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 binarizada = cv2.bitwise_not(binarizada)
@@ -43,27 +40,15 @@ print(f"Área por imágenes: {area_cm2:.2f} cm²")
 
 # Gráfico Punto 1
 plt.figure(figsize=(12, 4))
-plt.subplot(1, 3, 1); 
-plt.imshow(imagen, cmap='gray'); 
-plt.title('Original'); 
-plt.axis('off')
-
-plt.subplot(1, 3, 2); 
-plt.imshow(binarizada_limpia, cmap='gray'); 
-plt.title('Binarizada'); 
-plt.axis('off')
-
-plt.subplot(1, 3, 3); 
-plt.imshow(adhesivo_mask, cmap='gray'); 
-plt.title('Máscara'); 
-plt.axis('off')
+plt.subplot(1, 3, 1); plt.imshow(imagen, cmap='gray'); plt.title('Original'); plt.axis('off')
+plt.subplot(1, 3, 2); plt.imshow(binarizada_limpia, cmap='gray'); plt.title('Binarizada'); plt.axis('off')
+plt.subplot(1, 3, 3); plt.imshow(adhesivo_mask, cmap='gray'); plt.title('Máscara'); plt.axis('off')
 plt.tight_layout()
 plt.savefig('segmentacion.png', dpi=150, bbox_inches='tight')
 plt.show()
 
-#%% 2. MONTE CARLO PARA ÁREA (Punto 2)
+# 2. MONTE CARLO PARA ÁREA (Punto 2)
 print("\n2. Estimación Área por Monte Carlo...")
-
 h, w = imagen.shape
 puntos_x = np.random.uniform(0, w, N_PUNTOS_MC)
 puntos_y = np.random.uniform(0, h, N_PUNTOS_MC)
@@ -74,7 +59,6 @@ puntos_dentro = np.sum(resultados)
 area_total_muestreo = w * h
 area_estimada_mc = area_total_muestreo * (puntos_dentro / N_PUNTOS_MC)
 area_mc_cm2 = area_estimada_mc / (scale_px_per_cm ** 2)
-
 print(f"Área por MC: {area_mc_cm2:.2f} cm²")
 
 # Gráfico Punto 2
@@ -82,20 +66,14 @@ puntos_mc = np.column_stack((puntos_x, puntos_y))
 puntos_internos = puntos_mc[resultados]
 imagen_rgb = cv2.cvtColor(cv2.imread(IMAGEN_PATH), cv2.COLOR_BGR2RGB)
 plt.figure(figsize=(10, 4))
-plt.subplot(1, 2, 1); 
-plt.imshow(imagen_rgb); 
-plt.title('Original'); 
-plt.axis('off')
-
-plt.subplot(1, 2, 2); 
-plt.imshow(imagen_rgb); 
-plt.scatter(puntos_internos[:, 0], puntos_internos[:, 1], s=0.5, c='green', alpha=0.5)
+plt.subplot(1, 2, 1); plt.imshow(imagen_rgb); plt.title('Original'); plt.axis('off')
+plt.subplot(1, 2, 2); plt.imshow(imagen_rgb); plt.scatter(puntos_internos[:, 0], puntos_internos[:, 1], s=0.5, c='green', alpha=0.5)
 plt.title(f'MC: {area_mc_cm2:.2f} cm²'); plt.axis('off')
 plt.tight_layout()
 plt.savefig('montecarlo_area.png', dpi=150, bbox_inches='tight')
 plt.show()
 
-#%% 3. COMPARACIÓN Y ERROR VS. K (Punto 3)
+# 3. COMPARACIÓN Y ERROR VS. K (Punto 3)
 print("\n3. Comparación y Error vs. k...")
 error_relativo = abs(area_mc_cm2 - area_cm2) / area_cm2 * 100
 print(f"Comparación: Error relativo {error_relativo:.1f}%")
@@ -112,7 +90,7 @@ plt.legend(); plt.grid(alpha=0.3)
 plt.savefig('error_vs_k.png', dpi=150, bbox_inches='tight')
 plt.show()
 
-#%% 4. ANÁLISIS TIEMPO/FRECUENCIA (Punto 4)
+# 4. ANÁLISIS TIEMPO/FRECUENCIA (Punto 4)
 print("\n4. Análisis Tiempo/Frecuencia...")
 data = pd.read_csv(CSV_PATH)
 t = data.iloc[:, 0].values
@@ -154,7 +132,7 @@ for i in range(num_signals_total):
 f0_mhz = np.array(f0_values) / 1e6
 print(f"Media f0: {np.mean(f0_mhz):.3f} MHz")
 
-#%% 5. COMBINACIÓN MC + ESPECTRAL (Punto 5: Área de Adhesión)
+# 5. COMBINACIÓN MC + ESPECTRAL (Punto 5: Área de Adhesión)
 print("\n5. Combinación MC + Espectral...")
 y_coords, x_coords = np.where(adhesivo_mask)
 num_puntos_validos = len(x_coords)
@@ -165,7 +143,7 @@ pos_mapeadas_cm = posiciones_cm[:num_signals_total]
 adhesion_efectiva = area_cm2 * np.mean(f0_mhz)  # Integración: área × media f0
 print(f"Adhesión efectiva (área adhesión ponderada): {adhesion_efectiva:.3f} MHz·cm²")
 
-#%% 6. MAPA DEL "MÍNIMO" (Punto 6: Dos gráficos)
+# 6. MAPA DEL "MÍNIMO" (Punto 6: Dos gráficos)
 print("\n6. Mapa del Mínimo...")
 amplitud_minima = []
 for i in range(num_signals_total):
@@ -199,6 +177,9 @@ df_pos.to_csv('posiciones_muestreo.csv', index=False)
 df_f0 = pd.DataFrame({'D': range(1, num_signals_total+1), 'f0_MHz': f0_mhz, 'amp_min': amp_min})
 df_f0.to_csv('f0_y_minimo.csv', index=False)
 print("\n=== Figuras y CSVs generados para reporte. Todo cubierto! ===")
+
+
+
 
 #%%
 
